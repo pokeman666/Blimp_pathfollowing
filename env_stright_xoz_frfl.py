@@ -20,7 +20,7 @@ class LowPassFilter:
 class RGBlimpenv():
     def __init__(self, Time, actionTime,targetpos) -> None:
 
-        self.max_action = np.array([10.0, 0.05], dtype=np.float32)  # 每个维度的最大值
+        self.max_action = np.array([5.0, 5.0], dtype=np.float32)  # 每个维度的最大值
         # 目标位置，通常是一个路径或目标点
         self.targetpos = targetpos  # 修改为 targetpath
         # 成功标志，初始为0
@@ -94,7 +94,6 @@ class RGBlimpenv():
         self.Fl = 0.0  # gf    The output force of left propeller
         self.Fr = 0.0  # gf    The output force of right propeller
         self.rb = np.array([0.0747, 0.0006, 0.2380])
-        self.Input = np.array([self.Fl, self.Fr, self.rb[0]])
         # Initial Conditions
 
         # m     position from the inertial frame origin to the origin of the
@@ -120,7 +119,6 @@ class RGBlimpenv():
         # 重置完成标志为False
         self.done = False
         # 重置输入向量为[0., 0., 0.]
-        self.Input = np.array([0., 0., 0.])
 
         # 初始条件
         # m 从惯性坐标系原点到体固定坐标系原点的位置
@@ -216,11 +214,9 @@ class RGBlimpenv():
 
     
     def step(self, action):
-        self.Fl = self.filter_fl.update(action[0]*0.5)
-        self.Fr = self.filter_fr.update(action[0]*0.5)
-        self.rb[0] = 0.0747+self.filter_rb0.update(action[1])
+        self.Fl = self.filter_fl.update(action[0])
+        self.Fr = self.filter_fr.update(action[1])
 
-        self.Input = np.array([self.Fl, self.Fr, self.rb[0]])
         #update state
         for i in range(int(self.actionTime / self.del_t)):
             Rho = self.Rho  # 空气密度
@@ -352,11 +348,11 @@ class RGBlimpenv():
         target_xoz = self.targetpos
 
         angel = self.angle_between_vectors(v, target_xoz)
-        # dis_to_targetpos = np.linalg.norm(p_xoz-target_xoz)
+        dis_to_targetpos = np.linalg.norm(p_xoz-target_xoz)
 
         # reward = -distance**2 - dis_to_targetpos**2
         # reward = -distance * 1 - dis_to_targetpos * 0.1 - angel * 0.1
-        reward = -distance * 1 - angel * 0.1
+        reward = -distance * 1 - angel * 1 - dis_to_targetpos * 0.01
         if self.p[0] > self.targetpos[0]+0.3:
             self.done = True
         return reward

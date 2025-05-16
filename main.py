@@ -12,7 +12,7 @@ import os
 
 '''Hyperparameter Setting'''
 parser = argparse.ArgumentParser()
-parser.add_argument('--run_id', type=str, default='9', help='run id')
+parser.add_argument('--run_id', type=str, default='16', help='run id')
 parser.add_argument('--dvc', type=str, default='cuda', help='running device: cuda or cpu')
 parser.add_argument('--write', type=str2bool, default=True, help='Use SummaryWriter to record the training')
 parser.add_argument('--Loadmodel', type=str2bool, default=False, help='Load pretrained model or Not')
@@ -37,9 +37,9 @@ print(opt)
 
 def main():
     # Build Env
-    Time = 60.0
+    Time = 100.0
     action_time = 0.2
-    target = np.array([120.0, 0.0, -45])
+    target = np.array([40.0, 0.0, 20.0])
     env = RGBlimpenv(Time, action_time, target)
     eval_env = RGBlimpenv(Time, action_time, target)
 
