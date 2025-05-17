@@ -184,6 +184,28 @@ class RGBlimpenv():
         distance = np.linalg.norm(point - projection_point)
         # 返回距离
         return distance
+    
+    def point_to_line_distance(self, point, direction_vector):
+        """
+        计算三维空间中点到直线的距离
+        假设直线经过原点,沿direction_vector方向延伸
+        
+        参数：
+        point: list/np.array 三维点坐标 [x, y, z]
+        direction_vector: list/np.array 三维方向向量 [a, b, c]
+        
+        返回：
+        float 点到直线的距离
+        """
+        # 转换为numpy数组
+        p = np.array(point)
+        v = np.array(direction_vector)
+        
+        # 计算叉乘的模
+        cross_product = np.cross(p, v)
+        distance = np.linalg.norm(cross_product) / np.linalg.norm(v)
+        
+        return distance
 
     def findpoint(self,P, v):
 
@@ -340,20 +362,33 @@ class RGBlimpenv():
         return state, reward, self.done, self.Rbi.T @ state[0:3], np.linalg.solve(self.Jbi, state[3:6]),self.pt,self.Fl,self.Fr,self.rb[0]-0.0747,self.p
 
     def reward(self, state):
+        #求解点到直线的距离 横向偏差
         distance =  self.dist[2]
-        
-        # rl-xoz
-        p_xoz = np.array([self.p[0],0,self.p[2]])
+        lateral_error = self.point_to_line_distance(self.p, self.targetpos)
+
+        #求解航向偏差
         v = self.Rbi.T @ state[0:3]
-        target_xoz = self.targetpos
+        target_dir = self.targetpos - self.p
+        if np.linalg.norm(target_dir) > 1e-6 and np.linalg.norm(v) > 1e-6:
+            target_dir_unit = target_dir / np.linalg.norm(target_dir)
+            v_unit = v / np.linalg.norm(v)
+            heading_error = np.arccos(np.clip(np.dot(v_unit, target_dir_unit), -1.0, 1.0))#用来惩罚大偏差【0,pi】
+            cos_sim = np.dot(v_unit, target_dir_unit)#用来保持小角度 【-1,1】
 
-        angel = self.angle_between_vectors(v, target_xoz)
-        dis_to_targetpos = np.linalg.norm(p_xoz-target_xoz)
+        #求解进度奖励（沿路径方向的移动）
+        dis_to_target = np.linalg.norm(self.p - self.targetpos)
+        if not hasattr(self, 'prev_distance'):
+            self.prev_distance = dis_to_target
+        progress = self.prev_distance - dis_to_target
+        self.prev_distance = dis_to_target
+        # distance_weight = np.clip(dis_to_target/10.0, 0.1, 1.0)
 
-        # reward = -distance**2 - dis_to_targetpos**2
-        # reward = -distance * 1 - dis_to_targetpos * 0.1 - angel * 0.1
-        # reward = -distance * 1 - angel * 1 - dis_to_targetpos * 0.01
-        reward = -distance * 1 - angel * 1 
+        reward = (
+            - lateral_error ** 2
+            - heading_error ** 2
+            + progress * 2.0
+            + 0.5 * cos_sim  # 方向对齐奖励
+        )
         if self.p[0] > self.targetpos[0]+0.3:
             self.done = True
         return reward
