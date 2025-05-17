@@ -12,7 +12,7 @@ import os
 
 '''Hyperparameter Setting'''
 parser = argparse.ArgumentParser()
-parser.add_argument('--run_id', type=str, default='16', help='run id')
+parser.add_argument('--run_id', type=str, default='17', help='run id')
 parser.add_argument('--dvc', type=str, default='cuda', help='running device: cuda or cpu')
 parser.add_argument('--write', type=str2bool, default=True, help='Use SummaryWriter to record the training')
 parser.add_argument('--Loadmodel', type=str2bool, default=False, help='Load pretrained model or Not')

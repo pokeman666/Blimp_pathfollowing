@@ -344,7 +344,7 @@ class RGBlimpenv():
         
         # rl-xoz
         p_xoz = np.array([self.p[0],0,self.p[2]])
-        v = state[0:3]
+        v = self.Rbi.T @ state[0:3]
         target_xoz = self.targetpos
 
         angel = self.angle_between_vectors(v, target_xoz)
@@ -352,7 +352,8 @@ class RGBlimpenv():
 
         # reward = -distance**2 - dis_to_targetpos**2
         # reward = -distance * 1 - dis_to_targetpos * 0.1 - angel * 0.1
-        reward = -distance * 1 - angel * 1 - dis_to_targetpos * 0.01
+        # reward = -distance * 1 - angel * 1 - dis_to_targetpos * 0.01
+        reward = -distance * 1 - angel * 1 
         if self.p[0] > self.targetpos[0]+0.3:
             self.done = True
         return reward
