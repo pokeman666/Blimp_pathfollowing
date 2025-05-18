@@ -383,9 +383,15 @@ class RGBlimpenv():
         self.prev_distance = dis_to_target
         # distance_weight = np.clip(dis_to_target/10.0, 0.1, 1.0)
 
+        # reward = (
+        #     - lateral_error ** 2
+        #     - heading_error ** 2
+        #     + progress * 2.0
+        #     + 0.5 * cos_sim  # 方向对齐奖励
+        # )
         reward = (
-            - lateral_error ** 2
-            - heading_error ** 2
+            - lateral_error
+            - heading_error
             + progress * 2.0
             + 0.5 * cos_sim  # 方向对齐奖励
         )
