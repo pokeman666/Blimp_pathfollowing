@@ -12,13 +12,13 @@ import os
 
 '''Hyperparameter Setting'''
 parser = argparse.ArgumentParser()
-parser.add_argument('--run_id', type=str, default='21', help='run id')
+parser.add_argument('--run_id', type=str, default='28', help='run id')
 parser.add_argument('--dvc', type=str, default='cuda', help='running device: cuda or cpu')
 parser.add_argument('--write', type=str2bool, default=True, help='Use SummaryWriter to record the training')
 parser.add_argument('--Loadmodel', type=str2bool, default=False, help='Load pretrained model or Not')
 
 parser.add_argument('--seed', type=int, default=0, help='random seed')
-parser.add_argument('--Max_train_steps', type=int, default=int(5e5), help='Max training steps')
+parser.add_argument('--Max_train_steps', type=int, default=int(1e6), help='Max training steps')
 parser.add_argument('--save_interval', type=int, default=int(100e3), help='Model saving interval, in steps.')
 parser.add_argument('--eval_interval', type=int, default=int(2.5e3), help='Model evaluating interval, in steps.')
 parser.add_argument('--update_every', type=int, default=50, help='Training Fraquency, in stpes')
@@ -37,9 +37,9 @@ print(opt)
 
 def main():
     # Build Env
-    Time = 100.0
+    Time = 15.0
     action_time = 0.2
-    target = np.array([40.0, 0.0, 20.0])
+    target = np.array([4.0, -2.0, -2.0])
     env = RGBlimpenv(Time, action_time, target)
     eval_env = RGBlimpenv(Time, action_time, target)
 

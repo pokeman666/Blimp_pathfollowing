@@ -390,7 +390,7 @@ class RGBlimpenv():
         #     + 0.5 * cos_sim  # 方向对齐奖励
         # )
         reward = (
-            - lateral_error
+            - lateral_error * 2.0
             - heading_error
             + progress * 2.0
             + 0.5 * cos_sim  # 方向对齐奖励
