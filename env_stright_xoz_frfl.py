@@ -93,7 +93,7 @@ class RGBlimpenv():
         # Input
         self.Fl = 0.0  # gf    The output force of left propeller
         self.Fr = 0.0  # gf    The output force of right propeller
-        self.rb = np.array([0.0747, 0.0006, 0.2380])
+        self.rb = np.array([np.random.uniform(0.0247,0.1247), 0.0006, 0.2380])
         # Initial Conditions
 
         # m     position from the inertial frame origin to the origin of the
@@ -120,10 +120,16 @@ class RGBlimpenv():
         self.done = False
         # 重置输入向量为[0., 0., 0.]
 
+        # 随机生成滑块位置
+        self.rb = np.array([np.random.uniform(0.0247,0.1247), 0.0006, 0.2380])
+
         # 初始条件
         # m 从惯性坐标系原点到体固定坐标系原点的位置
         self.p = np.array([0.0, 0.0, 0.0])  # 位置向量
         self.pt = np.array([0.0, 0.0, 0.0])
+
+        #训练时， 目标终点的位置随机生成
+        self.targetpos = np.random.uniform(low=[4.0, -2.0, -2.0], high=[5.0, 2.0, 2.0]) 
 
         # 训练时，初始速度、角速度和欧拉角在一定范围内随机生成
         self.v = np.random.uniform(low=[0.5, 0, -0.2], high=[1.0, 0, 0.2])  # 速度向量
