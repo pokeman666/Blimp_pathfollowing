@@ -129,7 +129,6 @@ def evaluate_policy(env, max_action, agent, turns, steps, run_id):
 			pos_ = np.array([pos_[0],0,pos_[2]])
 			PT_array[count,:] = pt_
 			count += 1
-
 			total_scores += r
 			s = s_next
 		# if not draw_flag:

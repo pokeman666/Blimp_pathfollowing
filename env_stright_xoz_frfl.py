@@ -108,7 +108,7 @@ class RGBlimpenv():
         self.Jbi = np.eye(3)
 
 
-        self.state_dim = 15
+        self.state_dim = 16
         self.action_dim =2
 
     def reset(self):
@@ -146,7 +146,8 @@ class RGBlimpenv():
         point = self.findpoint(p_xoz_vector, self.targetpos)
         # 计算距离向量
         self.dist = np.array([point[0] - p_xoz_vector[0], point[2] - p_xoz_vector[2], 0])
-        state = np.concatenate((self.v, self.w, self.e, self.p, self.targetpos))
+        np.atleast_1d(self.rb[0])
+        state = np.concatenate((self.v, self.w, self.e, self.p, self.targetpos, np.atleast_1d(self.rb[0])))
 
         # 计算旋转矩阵Rbi和雅可比矩阵Jbi
         e = self.e
@@ -353,7 +354,7 @@ class RGBlimpenv():
             self.v = np.clip(self.v, v_min, v_max)
             self.w = np.clip(self.w, w_min, w_max)
 
-            state = np.concatenate((self.v, self.w, self.e, self.p, self.targetpos))
+            state = np.concatenate((self.v, self.w, self.e, self.p, self.targetpos,  np.atleast_1d(self.rb[0])))
         
         self.currentTime += self.actionTime
         reward = self.reward(state)
