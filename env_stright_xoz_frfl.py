@@ -20,7 +20,7 @@ class LowPassFilter:
 class RGBlimpenv():
     def __init__(self, Time, actionTime,targetpos) -> None:
 
-        self.max_action = np.array([5.0, 5.0], dtype=np.float32)  # 每个维度的最大值
+        self.max_action = np.array([1.0, 1.0], dtype=np.float32)  # 每个维度的最大值
         # 目标位置，通常是一个路径或目标点
         self.targetpos = targetpos  # 修改为 targetpath
         # 成功标志，初始为0
@@ -132,7 +132,7 @@ class RGBlimpenv():
         self.targetpos = np.random.uniform(low=[4.0, -2.0, -2.0], high=[5.0, 2.0, 2.0]) 
 
         # 训练时，初始速度、角速度和欧拉角在一定范围内随机生成
-        self.v = np.random.uniform(low=[0.5, 0, -0.2], high=[1.0, 0, 0.2])  # 速度向量
+        self.v = np.random.uniform(low=[0.1, 0, 0], high=[0.1, 0, 0.2])  # 速度向量
         self.w = np.random.uniform(low=[0, -0.3, 0], high=[0, 0.3, 0])  # 角速度向量
         self.e = np.random.uniform(low=[0, -np.pi / 6, 0], high=[0, np.pi / 6, 0])  # 欧拉角
         # # test时
@@ -146,8 +146,7 @@ class RGBlimpenv():
         point = self.findpoint(p_xoz_vector, self.targetpos)
         # 计算距离向量
         self.dist = np.array([point[0] - p_xoz_vector[0], point[2] - p_xoz_vector[2], 0])
-        np.atleast_1d(self.rb[0])
-        state = np.concatenate((self.v, self.w, self.e, self.p, self.targetpos, np.atleast_1d(self.rb[0])))
+        state = np.concatenate((self.v, self.w, self.e, self.p, self.targetpos, 10*np.atleast_1d(self.rb[0])))
 
         # 计算旋转矩阵Rbi和雅可比矩阵Jbi
         e = self.e
@@ -354,7 +353,7 @@ class RGBlimpenv():
             self.v = np.clip(self.v, v_min, v_max)
             self.w = np.clip(self.w, w_min, w_max)
 
-            state = np.concatenate((self.v, self.w, self.e, self.p, self.targetpos,  np.atleast_1d(self.rb[0])))
+            state = np.concatenate((self.v, self.w, self.e, self.p, self.targetpos,  10*np.atleast_1d(self.rb[0])))
         
         self.currentTime += self.actionTime
         reward = self.reward(state)

@@ -12,7 +12,7 @@ import os
 
 '''Hyperparameter Setting'''
 parser = argparse.ArgumentParser()
-parser.add_argument('--run_id', type=str, default='32', help='run id')
+parser.add_argument('--run_id', type=str, default='37', help='run id')
 parser.add_argument('--dvc', type=str, default='cuda', help='running device: cuda or cpu')
 parser.add_argument('--write', type=str2bool, default=True, help='Use SummaryWriter to record the training')
 parser.add_argument('--Loadmodel', type=str2bool, default=False, help='Load pretrained model or Not')
@@ -24,7 +24,7 @@ parser.add_argument('--eval_interval', type=int, default=int(5e3), help='Model e
 parser.add_argument('--update_every', type=int, default=50, help='Training Fraquency, in stpes')
 
 parser.add_argument('--gamma', type=float, default=0.99, help='Discounted Factor')
-parser.add_argument('--net_width', type=int, default=256, help='Hidden net width, s_dim-400-300-a_dim')
+parser.add_argument('--net_width', type=int, default=512, help='Hidden net width, s_dim-400-300-a_dim')
 parser.add_argument('--a_lr', type=float, default=3e-4, help='Learning rate of actor')
 parser.add_argument('--c_lr', type=float, default=3e-4, help='Learning rate of critic')
 parser.add_argument('--batch_size', type=int, default=256, help='batch_size of training')

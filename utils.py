@@ -74,7 +74,7 @@ def Reward_adapter(r):
 
 def Action_adapter(a,max_action):
 	#from [-1,1] to [-max,max]
-	return  a*max_action
+	return  a*max_action*2.5 + 2.5
 
 def Action_adapter_reverse(act,max_action):
 	#from [-max,max] to [-1,1]
@@ -129,6 +129,7 @@ def evaluate_policy(env, max_action, agent, turns, steps, run_id):
 			pos_ = np.array([pos_[0],0,pos_[2]])
 			PT_array[count,:] = pt_
 			count += 1
+
 			total_scores += r
 			s = s_next
 		# if not draw_flag:
