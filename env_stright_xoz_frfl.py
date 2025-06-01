@@ -132,9 +132,9 @@ class RGBlimpenv():
         self.targetpos = np.random.uniform(low=[4.0, -2.0, -2.0], high=[5.0, 2.0, 2.0]) 
 
         # 训练时，初始速度、角速度和欧拉角在一定范围内随机生成
-        self.v = np.random.uniform(low=[0.1, 0, 0], high=[0.1, 0, 0.2])  # 速度向量
+        self.v = np.random.uniform(low=[0.75, 0, 0.0], high=[1.0, 0, 0.2])  # 速度向量
         self.w = np.random.uniform(low=[0, -0.3, 0], high=[0, 0.3, 0])  # 角速度向量
-        self.e = np.random.uniform(low=[0, -np.pi / 6, 0], high=[0, np.pi / 6, 0])  # 欧拉角
+        self.e = np.random.uniform(low=[0, 0, 0], high=[0, 0, 0])  # 欧拉角
         # # test时
         # self.v = np.array([0.5,0,0])
         # self.w = np.array([0.0,0.0,0.0])
@@ -396,13 +396,16 @@ class RGBlimpenv():
         #     + 0.5 * cos_sim  # 方向对齐奖励
         # )
         reward = (
-            - lateral_error * 2.0
+            - lateral_error * 3.0
             - heading_error
             + progress * 2.0
             + 0.5 * cos_sim  # 方向对齐奖励
         )
         if self.p[0] > self.targetpos[0]+0.3:
             self.done = True
+        if np.linalg.norm(np.array(self.p) - np.array(self.targetpos))<0.2:
+            self.done = True
+            reward += 5
         return reward
     
     def path(self,path,P_start_array,PT_array):

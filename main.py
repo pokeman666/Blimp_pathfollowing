@@ -12,7 +12,9 @@ import os
 
 '''Hyperparameter Setting'''
 parser = argparse.ArgumentParser()
-parser.add_argument('--run_id', type=str, default='37', help='run id')
+# 添加新的note参数
+parser.add_argument('--note', type=str, default='', help='Description for this run')
+parser.add_argument('--run_id', type=str, default='38', help='run id')
 parser.add_argument('--dvc', type=str, default='cuda', help='running device: cuda or cpu')
 parser.add_argument('--write', type=str2bool, default=True, help='Use SummaryWriter to record the training')
 parser.add_argument('--Loadmodel', type=str2bool, default=False, help='Load pretrained model or Not')
@@ -62,6 +64,31 @@ def main():
         if os.path.exists(writepath): shutil.rmtree(writepath)
         writer = SummaryWriter(log_dir=writepath)
 
+                # ====== 新增：保存运行描述和配置 ======
+        # 创建记录文件
+        os.makedirs(writepath, exist_ok=True)
+        record_file = os.path.join(writepath, "run_record.txt")
+        
+        with open(record_file, 'w') as f:
+            # 写入运行时间
+            f.write(f"Run started at: {datetime.now()}\n\n")
+            
+            # 写入用户描述
+            f.write("===== USER NOTE =====\n")
+            f.write(f"{opt.note}\n\n")
+            
+            # 写入完整的运行配置
+            f.write("===== RUN CONFIGURATION =====\n")
+            for arg in vars(opt):
+                f.write(f"{arg}: {getattr(opt, arg)}\n")
+            
+            # 写入环境参数
+            f.write("\n===== ENVIRONMENT PARAMETERS =====\n")
+            f.write(f"Time: {Time}\n")
+            f.write(f"Action time: {action_time}\n")
+            f.write(f"Target: {target}\n")
+            f.write(f"Max episode steps: {opt.max_e_steps}\n")
+        # ===================================
 
     # Build DRL model
     if not os.path.exists('model'): os.mkdir('model')
